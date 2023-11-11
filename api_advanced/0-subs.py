@@ -1,23 +1,28 @@
 #!/usr/bin/python3
-"""
-This module contains a function to get the number of subscribers of a subreddit.
-"""
+'''
+Defines function that queries the Reddit API and returns the
+number of subscribers
+'''
 import requests
-
-def get_number_of_subscribers(subreddit):
-    """Returns the number of subscribers or 0 if the subreddit does not exist."""
-    url = f"https://www.reddit.com/r/{subreddit}/about.json"
-    headers = {'User-Agent': 'My User Agent 1.0'}
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        subscribers = response.json().get('data').get('subscribers')
-        if subscribers > 0:
-            return "OK"
-    return "0"
+import sys
 
 
-# Test the function with a specific subreddit
-subreddit_name = "learnpython" 
-result = get_number_of_subscribers(subreddit_name)
-print(result)
+def number_of_subscribers(subreddit):
+    '''Queries the Reddit API and returns the
+    number of subscribers
+    Return:
+        0 - if invalid subreddit is given
+    '''
+    if subreddit is None or not isinstance(subreddit, str):
+        return(0)
+    endpoint = 'https://www.reddit.com'
+    headers = {'user-agent': 'Mozilla/5.0 \
+(Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'}
+    info = requests.get('{}/r/{}/about.json'.format(
+            endpoint,
+            subreddit), headers=headers, allow_redirects=False)
+    if info.status_code == 200:
+        json_info = info.json()
+        return(json_info.get('data').get('subscribers'))
+    else:
+        return(0)
